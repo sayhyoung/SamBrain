@@ -1,23 +1,14 @@
 ---
-# === 템플릿 메타데이터 (이 섹션은 실제 노트에 복사 안 됨) ===
-type: template
-target: area
-status: approved
-version: 1.0.0
-compat:
-  templater: ">=1.24.0"
-  obsidian: ">=1.0.0"
-changelog_url: "[[6. Templates/CHANGELOG]]"
-superseded_by: ""
-# ===============================================
-
-# === 실제 노트 Frontmatter (아래부터 복사됨) ===
 # PARA 규칙: created/updated/due/related 사용 금지 (OS 메타 file.ctime/file.mtime 활용)
 type: area
 status: active
 # review_cycle: monthly
 # tags: [area/operations]
 ---
+<!-- TEMPLATE-META (생성된 노트에서 이 주석은 삭제) · 레지스트리 SSOT: [[6. Templates/CLAUDE]]
+target: area · status: approved · version: 1.0.0 · changelog: [[6. Templates/CHANGELOG]]
+compat: templater >=1.24.0, obsidian >=1.0.0 · superseded_by: -
+-->
 
 # <% tp.file.title %>
 

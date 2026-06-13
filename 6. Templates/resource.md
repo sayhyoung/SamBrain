@@ -1,17 +1,4 @@
 ---
-# === 템플릿 메타데이터 (이 섹션은 실제 노트에 복사 안 됨) ===
-type: template
-target: resource
-status: approved
-version: 1.0.0
-compat:
-  templater: "none"
-  obsidian: ">=1.0.0"
-changelog_url: "[[6. Templates/CHANGELOG]]"
-superseded_by: ""
-# ===============================================
-
-# === 실제 노트 Frontmatter (아래부터 복사됨) ===
 # PARA 규칙: due/created/updated/related 사용 금지 (OS 메타 활용). Templater 불필요.
 type: resource
 status: active
@@ -21,6 +8,10 @@ category: ""
 # url: ""
 # tags: [resource/development]
 ---
+<!-- TEMPLATE-META (생성된 노트에서 이 주석은 삭제) · 레지스트리 SSOT: [[6. Templates/CLAUDE]]
+target: resource · status: approved · version: 1.0.0 · changelog: [[6. Templates/CHANGELOG]]
+compat: templater none, obsidian >=1.0.0 · superseded_by: -
+-->
 
 #
 

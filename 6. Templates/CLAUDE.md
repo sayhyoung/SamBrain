@@ -63,73 +63,50 @@ related: ["CLAUDE.md"]
 
 ## 템플릿 Frontmatter 규칙
 
-모든 템플릿 파일은 **2개의 Frontmatter 블록**을 가져야 합니다.
+각 템플릿 파일은 **① Frontmatter = 실제 노트 Frontmatter**(깨끗한 단일 스키마)로만 채우고, **② 템플릿 메타데이터(target/status/version/compat 등)는 본문 최상단의 HTML 주석 `TEMPLATE-META` 블록**에 둡니다.
+
+> ⚠️ 과거에는 한 Frontmatter 블록에 `type: template`과 실제 `type: project`를 함께 넣는 "2중 블록" 방식을 썼으나, YAML 중복 키로 인해 생성된 노트의 `type`이 깨지고 Dataview 집계가 틀어지는 문제가 있어 **이 방식으로 전환(2025-06-13)**했습니다.
 
 ### 구조
 
 ```yaml
 ---
-# === 템플릿 메타데이터 (이 섹션은 실제 노트에 복사 안 됨) ===
-type: template
-target: project         # project | area | resource | literature | permanent | doc | archive
-status: approved        # draft | review | approved | deprecated | superseded
-version: 1.2.0          # semver
-compat:
-  templater: ">=1.24.0"
-  obsidian: ">=1.0.0"
-changelog_url: "[[6. Templates/CHANGELOG]]"
-superseded_by: ""       # 대체 템플릿 ID (deprecated/superseded 시)
-# ===============================================
-
-# === 실제 노트 Frontmatter (아래부터 복사됨) ===
+# 실제 노트 Frontmatter (생성될 노트에 그대로 적용됨) — 각 폴더 CLAUDE.md 규칙 준수
 type: project
 status: todo
 due: <% tp.date.now("YYYY-MM-DD", 7) %>
 # area: <% tp.file.cursor(1) %>
 # tags: []
 ---
+<!-- TEMPLATE-META (생성된 노트에서 이 주석은 삭제) · 레지스트리 SSOT: [[6. Templates/CLAUDE]]
+target: project · status: approved · version: 1.2.0 · changelog: [[6. Templates/CHANGELOG]]
+compat: templater >=1.24.0, obsidian >=1.0.0 · superseded_by: -
+-->
 ```
+
+- **target**: 생성될 노트의 `type` (project | area | resource | literature | permanent | doc | archive | daily | hub)
+- **status**: 템플릿 수명주기 (draft | review | approved | deprecated | superseded)
+- **version**: semver (MAJOR.MINOR.PATCH)
+- **compat**: 필요 Templater/Obsidian 최소 버전 (`none` = Templater 불필요)
+- **superseded_by**: deprecated/superseded 시 대체 템플릿 ID (없으면 `-`)
+- 메타 주석은 **사람·Claude가 읽는 용도**이며, 버전/상태의 권위 있는 출처는 위 레지스트리 표(SSOT)입니다. 생성된 노트에서는 이 주석을 삭제합니다.
 
 ### 필드 설명
 
-#### 템플릿 메타데이터 (상단)
+#### 실제 노트 Frontmatter (① YAML 블록)
+- 생성될 노트에 그대로 적용되는 스키마 — **각 폴더 CLAUDE.md 규칙을 100% 준수**
+- Templater 동적 값 사용 (날짜 `<% tp.date.now(...) %>`, 커서 `<% tp.file.cursor(n) %>`)
+- 선택 필드는 `#` 주석으로 표시
+- `type`은 하나만 (해당 폴더 타입). `type: template`을 여기에 넣지 않음
 
-**type: template** (필수)
-- 항상 `template` 고정
-- Dataview로 템플릿만 필터링 가능
-
-**target** (필수)
-- 생성될 노트의 `type` 값
-- ENUM: `project`, `area`, `resource`, `literature`, `permanent`, `doc`, `archive`, `daily`, `hub`
-
-**status** (필수)
-- 템플릿 수명주기 상태
-- ENUM: `draft`, `review`, `approved`, `deprecated`, `superseded`
-
-**version** (필수)
-- Semantic Versioning 준수
-- 형식: `MAJOR.MINOR.PATCH`
-- 예: `1.2.0`
-
-**compat** (필수)
-- 호환성 정보
-- `templater`: Templater 플러그인 최소 버전 (또는 `"none"`)
-- `obsidian`: Obsidian 최소 버전
-
-**changelog_url** (권장)
-- 변경 이력 문서 링크
-- 예: `[[6. Templates/CHANGELOG]]`
-
-**superseded_by** (조건부 필수)
-- `deprecated` 또는 `superseded` 상태일 때 필수
-- 대체 템플릿 ID 명시
-- 예: `"project-v2"`
-
-#### 실제 노트 Frontmatter (하단)
-
-- 각 폴더 CLAUDE.md 규칙 준수
-- Templater 동적 값 사용 (날짜, 커서 등)
-- 주석으로 선택 필드 표시
+#### TEMPLATE-META (② 본문 상단 HTML 주석)
+- **target** (필수): 생성될 노트의 `type` 값 — ENUM `project | area | resource | literature | permanent | doc | archive | daily | hub`
+- **status** (필수): 템플릿 수명주기 — `draft | review | approved | deprecated | superseded`
+- **version** (필수): Semantic Versioning `MAJOR.MINOR.PATCH`
+- **compat** (필수): `templater` 최소 버전(또는 `none`), `obsidian` 최소 버전
+- **changelog** (권장): `[[6. Templates/CHANGELOG]]`
+- **superseded_by** (조건부 필수): `deprecated`/`superseded` 시 대체 템플릿 ID, 없으면 `-`
+- 생성된 노트에서는 이 주석을 삭제 (메타데이터가 노트에 남지 않도록)
 
 ### `updated` 필드 관리 ⭐
 
@@ -320,8 +297,8 @@ project-v2.md (v2.0.0, approved)
 ### Claude가 템플릿을 호출/수정할 때 준수 사항
 
 1. **핵심 YAML 필드 보존**
-   - 템플릿 메타데이터 (`type: template`, `target`, `status`, `version`) 절대 삭제 금지
-   - 실제 노트 Frontmatter는 각 폴더 CLAUDE.md 규칙 준수
+   - 본문 상단 `TEMPLATE-META` 주석(`target`, `status`, `version`, `compat`) 절대 삭제 금지
+   - Frontmatter(① 블록)는 각 폴더 CLAUDE.md 규칙 준수, `type`은 폴더 타입 하나만 (`type: template` 금지)
 
 2. **버전 변경 시 절차 준수**
    - 버전 증가 → CHANGELOG 업데이트 → 레지스트리 갱신
@@ -342,44 +319,16 @@ project-v2.md (v2.0.0, approved)
 
 ## Dataview 검증 대시보드
 
-### 모든 템플릿 현황
+> ⚠️ 새 포맷에서는 템플릿 메타데이터가 Frontmatter가 아니라 본문 `TEMPLATE-META` HTML 주석에 있어 **Dataview로 자동 조회되지 않습니다.** 템플릿 버전/상태의 권위 있는 출처는 위 **레지스트리 표(SSOT)**이며, 월간 점검 시 "레지스트리 표 ↔ 각 파일의 `TEMPLATE-META` 주석" 일치를 수동 확인합니다.
+>
+> 아래 쿼리는 폴더의 파일 목록·수정일 정도만 보조적으로 확인하는 용도입니다.
+
+### 템플릿 파일 목록 (수정일)
 
 ```dataview
-TABLE
-  target as "대상",
-  status as "상태",
-  version as "버전",
-  compat.templater as "Templater",
-  file.mtime as "업데이트"
+TABLE file.mtime as "업데이트"
 FROM "6. Templates"
-WHERE type = "template"
-SORT status ASC, version DESC
-```
-
-### Deprecated 템플릿 (마이그레이션 필요)
-
-```dataview
-LIST superseded_by as "대체 템플릿"
-FROM "6. Templates"
-WHERE type = "template" AND status = "deprecated"
-```
-
-### Draft/Review 템플릿 (승인 대기)
-
-```dataview
-TABLE target, version, file.mtime as "업데이트"
-FROM "6. Templates"
-WHERE type = "template" AND (status = "draft" OR status = "review")
-SORT file.mtime DESC
-```
-
-### 호환성 경고 (Templater 버전 체크)
-
-```dataview
-TABLE compat.templater as "Templater 요구", compat.obsidian as "Obsidian 요구"
-FROM "6. Templates"
-WHERE type = "template"
-  AND compat.templater != "none"
+WHERE file.name != "CLAUDE" AND file.name != "CHANGELOG"
 SORT file.name ASC
 ```
 
@@ -400,7 +349,7 @@ SORT length(rows) DESC
 
 ## 태그 사용 원칙
 
-- **템플릿 파일 자체**에는 태그 불필요 (type: template로 식별)
+- **템플릿 파일 자체**에는 태그 불필요 (`6. Templates/` 위치 + `TEMPLATE-META` 주석으로 식별)
 - **생성된 노트**는 각 폴더 CLAUDE.md 태그 규칙 준수
 
 ---
@@ -411,25 +360,16 @@ SORT length(rows) DESC
 
 ```markdown
 ---
-# === 템플릿 메타데이터 ===
-type: template
-target: project
-status: approved
-version: 1.2.0
-compat:
-  templater: ">=1.24.0"
-  obsidian: ">=1.0.0"
-changelog_url: "[[6. Templates/CHANGELOG]]"
-superseded_by: ""
-# ===============================================
-
-# === 실제 노트 Frontmatter ===
 type: project
 status: todo
 due: <% tp.date.now("YYYY-MM-DD", 7) %>
 # area: <% tp.file.cursor(1) %>
 # tags: []
 ---
+<!-- TEMPLATE-META (생성된 노트에서 이 주석은 삭제) · 레지스트리 SSOT: [[6. Templates/CLAUDE]]
+target: project · status: approved · version: 1.2.0 · changelog: [[6. Templates/CHANGELOG]]
+compat: templater >=1.24.0, obsidian >=1.0.0 · superseded_by: -
+-->
 
 # <% tp.file.title %>
 
@@ -554,15 +494,17 @@ due: <% tp.date.now("YYYY-MM-DD", 7) %>  # 동적 값
 
 ### ❌ 버전 미관리 (템플릿 무정부 상태)
 
-```yaml
-# 템플릿 메타데이터 없음
+```markdown
+---
 type: project
 status: todo
+---
+<!-- TEMPLATE-META 주석 없음 → 버전/호환성 추적 불가 -->
 ```
 
 **문제**: 변경 추적 불가, 호환성 검증 불가
 
-**해결**: 모든 템플릿에 메타데이터 필수
+**해결**: 모든 템플릿에 본문 상단 `TEMPLATE-META` 주석(target/status/version/compat) 필수
 
 ---
 

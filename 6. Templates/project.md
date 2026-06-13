@@ -1,23 +1,14 @@
 ---
-# === 템플릿 메타데이터 (이 섹션은 실제 노트에 복사 안 됨) ===
-type: template
-target: project
-status: approved
-version: 1.2.0
-compat:
-  templater: ">=1.24.0"
-  obsidian: ">=1.0.0"
-changelog_url: "[[6. Templates/CHANGELOG]]"
-superseded_by: ""
-# ===============================================
-
-# === 실제 노트 Frontmatter (아래부터 복사됨) ===
 type: project
 status: todo
 due: <% tp.date.now("YYYY-MM-DD", 7) %>
 # area: <% tp.file.cursor(1) %>
 # tags: []
 ---
+<!-- TEMPLATE-META (생성된 노트에서 이 주석은 삭제) · 레지스트리 SSOT: [[6. Templates/CLAUDE]]
+target: project · status: approved · version: 1.2.0 · changelog: [[6. Templates/CHANGELOG]]
+compat: templater >=1.24.0, obsidian >=1.0.0 · superseded_by: -
+-->
 
 # <% tp.file.title %>
 
