@@ -45,6 +45,8 @@ related: ["CLAUDE.md"]
 | permanent | Permanent | permanent | approved | 1.2.0 | >=1.24 | 2025-10-17 | 영구 노트 |
 | docs | Docs | doc | approved | 1.0.0 | >=1.24 | 2025-10-16 | 문서 |
 | archive | Archive | archive | approved | 1.0.0 | >=1.24 | 2025-10-16 | 보관 항목 |
+| daily | Daily | daily | approved | 1.0.0 | >=1.24 | 2025-06-13 | 일일 노트 |
+| hub | Hub | hub | approved | 1.0.0 | >=1.24 | 2025-06-13 | 폴더 인덱스 허브 |
 
 ### 레지스트리 필드 설명
 
@@ -98,7 +100,7 @@ due: <% tp.date.now("YYYY-MM-DD", 7) %>
 
 **target** (필수)
 - 생성될 노트의 `type` 값
-- ENUM: `project`, `area`, `resource`, `literature`, `permanent`, `doc`, `archive`
+- ENUM: `project`, `area`, `resource`, `literature`, `permanent`, `doc`, `archive`, `daily`, `hub`
 
 **status** (필수)
 - 템플릿 수명주기 상태
@@ -306,7 +308,9 @@ project-v2.md (v2.0.0, approved)
 ├── literature.md          # 문헌 노트
 ├── permanent.md           # 영구 노트
 ├── docs.md                # 문서
-└── archive.md             # 보관 항목
+├── archive.md             # 보관 항목
+├── daily.md               # 일일 노트
+└── hub.md                 # 폴더 인덱스 허브
 ```
 
 ---
